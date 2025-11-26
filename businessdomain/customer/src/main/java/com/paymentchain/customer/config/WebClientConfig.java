@@ -37,4 +37,14 @@ public class WebClientConfig {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
+
+
+    @Bean(name = "transactionClient")
+    public WebClient transactionClient(HttpClient httpClient) {
+        return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .baseUrl("http://localhost:8083/transaction") // ajusta host/puerto si hace falta
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+    }
 }

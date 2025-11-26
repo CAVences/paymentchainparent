@@ -19,11 +19,13 @@ public class CustomerController {
 
     private final CustomerRepository customerRepository;
     private final WebClient productClient;   // WebClient ya configurado para productos
+    private final WebClient transactionClient;
 
     public CustomerController(CustomerRepository customerRepository,
-                              @Qualifier("productClient") WebClient productClient) {
+                              @Qualifier("productClient") WebClient productClient, @Qualifier("transactionClient") WebClient transactionClient) {
         this.customerRepository = customerRepository;
         this.productClient = productClient; // viene del @Bean de WebClientConfig
+        this.transactionClient = transactionClient;
     }
 
     @GetMapping
@@ -90,6 +92,10 @@ public class CustomerController {
                 product.setProductName(getProductName(product.getProductId()))
         );
 
+        List<?> transactions = getTransactionStatus(customer.getAccountNumber());
+
+        customer.setTransactions(transactions);
+
         customer.setProducts(products);
         return ResponseEntity.ok(customer);
     }
@@ -112,5 +118,20 @@ public class CustomerController {
         }
 
         return product.name();
+    }
+
+    private List<?> getTransactionStatus(String accountNumber) {
+        List<?> transactions = transactionClient
+                .get()
+                .uri("/customer/{account}", accountNumber)
+                .retrieve()
+                .bodyToMono(List.class)
+                .block();
+
+        if(transactions == null) {
+            return Collections.emptyList();
+        }
+
+        return  transactions;
     }
 }

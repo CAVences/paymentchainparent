@@ -1,9 +1,34 @@
+############################################
+# ARCHIVOS GENERALES
+############################################
 HELP.md
+
+# Salidas de compilación y empaquetado
 target/
 build/
+
+# Logs y archivos temporales
+*.log
+*.tmp
+*.swp
+*.swo
+
+############################################
+# MAVEN WRAPPER
+############################################
+# Si quieres que el wrapper forme parte del repo (recomendado para CI/CD),
+# NO ignores estos archivos. Comenta estas líneas si deseas subirlo.
+#mvnw
+#mvnw.cmd
+#.mvn/wrapper/
+
+# Si únicamente deseas ignorar el JAR del wrapper (opción recomendada):
 .mvn/wrapper/maven-wrapper.jar
 
-### STS ###
+
+############################################
+# Spring Tool Suite / STS
+############################################
 .apt_generated
 .classpath
 .factorypath
@@ -12,18 +37,48 @@ build/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+############################################
+# IntelliJ IDEA
+############################################
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# Opcional (si trabajas con múltiples developers)
+# Evita subir configuraciones personales
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/shelf/
+.idea/**/dataSources*
+.idea/**/httpRequests/
+
+############################################
+# NetBeans
+############################################
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
+############################################
+# Visual Studio Code
+############################################
 .vscode/
+
+############################################
+# SISTEMAS OPERATIVOS
+############################################
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
