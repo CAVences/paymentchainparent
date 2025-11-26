@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Debe apuntar a tu POM padre real -->
+    <parent>
+        <groupId>com.paymentchain</groupId>
+        <artifactId>paymentchain</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.paymentchain.infraestructuradomain</groupId>
+    <artifactId>infraestructuradomain</artifactId>
+    <packaging>pom</packaging>
+    <name>infraestructuradomain</name>
+    <description>Infrastructure domain modules for PaymentChain</description>
+
+    <properties>
+        <!-- Spring Cloud alineado con Spring Boot 4.0.0 -->
+        <!-- Revisa la tabla de compatibilidad oficial y ajusta si sale nueva release -->
+        <spring-cloud-dependencies.version>2025.1.0</spring-cloud-dependencies.version>
+    </properties>
+
+    <!-- Centraliza la versión de Spring Cloud para todos los módulos de infraestructura -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Si vas a tener submódulos de infraestructura, puedes declararlos aquí:
+    <modules>
+        <module>config-server</module>
+        <module>service-discovery</module>
+        <module>api-gateway</module>
+    </modules>
+    -->
+
+</project>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Debe apuntar a tu POM padre real -->
+    <parent>
+        <groupId>com.paymentchain</groupId>
+        <artifactId>paymentchain</artifactId> <!-- o paymentchainparent si así se llama tu parent -->
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.paymentchain.businessdomain</groupId>
+    <artifactId>businessdomain</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>customer</module>
+        <module>product</module>
+    </modules>
+
+    <properties>
+        <!-- Spring Cloud alineado con Spring Boot 4.0.0 -->
+        <spring-cloud-dependencies.version>2025.1.0</spring-cloud-dependencies.version>
+
+        <!-- MapStruct moderno -->
+        <org.mapstruct.version>1.6.3</org.mapstruct.version>
+
+        <!-- Lombok (última estable) -->
+        <org.lombok.version>1.18.42</org.lombok.version>
+
+        <!-- Springdoc para Boot 4 (a día de hoy en RC) -->
+        <org.springdoc.version>3.0.0-RC1</org.springdoc.version>
+
+        <!-- Mockito 5.x reciente -->
+        <org.mockito.version>5.20.0</org.mockito.version>
+    </properties>
+
+    <!-- BOM de Spring Cloud (encima del BOM de Spring Boot que ya está en el parent) -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Dependencias base que heredarán los módulos de businessdomain -->
+    <dependencies>
+        <!-- Web MVC clásico (con JPA, H2, springdoc, etc.) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- HATEOAS para armar enlaces en recursos REST -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+
+        <!-- Persistencia JPA (bloqueante, encaja mejor con MVC que con WebFlux) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- BD en memoria para pruebas / dev -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- OpenAPI + Swagger UI (webmvc) compatible con Boot 4 (rama 3.x, actualmente RC) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${org.springdoc.version}</version>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${org.lombok.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- MapStruct (usa 'mapstruct', no 'mapstruct-jdk8' que está deprecado) -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+
+        <!-- Tests: Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${org.mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Datos fake para tests -->
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>1.0.2</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+</project>
