@@ -13,8 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>customer</name>
     <description>customer</description>
-
-
+    <dependencies></dependencies>
 
     <build>
         <plugins>
