@@ -1,0 +1,42 @@
+HELP.md
+
+# Output de compilación Maven/Gradle
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Maven Wrapper
+# Opcional: ignora el jar (tu caso actual)
+.mvn/wrapper/maven-wrapper.jar
+# Estos NO se ignoran y se deben subir:
+# mvnw
+# mvnw.cmd
+# .mvn/wrapper/maven-wrapper.properties
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
