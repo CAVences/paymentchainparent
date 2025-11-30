@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: "Transaction"
+  cloud:
+    config:
+      enabled: false
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger.html
+
+server:
+  port: 8083

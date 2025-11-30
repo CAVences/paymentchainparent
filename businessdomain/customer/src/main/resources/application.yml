@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: "Customer"
+  config:
+    import:
+      - "optional:configserver:http://localhost:8888"
+  cloud:
+    config:
+      name: config-client
+      profile: dev

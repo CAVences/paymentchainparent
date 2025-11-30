@@ -4,6 +4,7 @@ import com.paymentchain.customer.entity.Customer;
 import com.paymentchain.customer.entity.CustomerProduct;
 import com.paymentchain.customer.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,12 +21,19 @@ public class CustomerController {
     private final CustomerRepository customerRepository;
     private final WebClient productClient;   // WebClient ya configurado para productos
     private final WebClient transactionClient;
+    private final Environment environment;
 
     public CustomerController(CustomerRepository customerRepository,
-                              @Qualifier("productClient") WebClient productClient, @Qualifier("transactionClient") WebClient transactionClient) {
+                              @Qualifier("productClient") WebClient productClient, @Qualifier("transactionClient") WebClient transactionClient, Environment environment) {
         this.customerRepository = customerRepository;
         this.productClient = productClient; // viene del @Bean de WebClientConfig
         this.transactionClient = transactionClient;
+        this.environment = environment;
+    }
+
+    @GetMapping("/check")
+    public String checkCustomer() {
+        return "Check Customer Successfully, " + environment.getProperty("custom.activeprofileName");
     }
 
     @GetMapping

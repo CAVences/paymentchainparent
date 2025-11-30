@@ -38,12 +38,10 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- Si vas a tener submódulos de infraestructura, puedes declararlos aquí:
+    <!-- Si vas a tener submódulos de infraestructura, puedes declararlos aquí:-->
     <modules>
-        <module>config-server</module>
-        <module>service-discovery</module>
-        <module>api-gateway</module>
+        <module>configserver</module>
+        <module>eurekaserver</module>
     </modules>
-    -->
 
 </project>
