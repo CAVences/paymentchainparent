@@ -1,15 +1,29 @@
 spring:
   application:
-    name: "Transaction"
+    name: "businessdomain-transaction"
+  config:
+    import: "optional:configserver:http://localhost:8888"
   cloud:
     config:
-      enabled: false
-
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    path: /swagger.html
+      name: config-client-transaction
+      profile: dev
+      discovery:
+        enabled: true
+      enabled: true
 
 server:
   port: 8083
+  eureka:
+    client:
+      service-url:
+        defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
+      healthcheck:
+        enabled: true
+      register-with-eureka: true
+      fetch-registry: true
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"

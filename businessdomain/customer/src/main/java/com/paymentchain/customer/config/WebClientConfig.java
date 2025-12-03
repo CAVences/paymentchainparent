@@ -3,6 +3,7 @@ package com.paymentchain.customer.config;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -29,22 +30,26 @@ public class WebClientConfig {
                 });
     }
 
-    @Bean(name = "productClient")
-    public WebClient productClient(HttpClient httpClient) {
+    @Bean
+    @LoadBalanced
+    public WebClient.Builder loadBalancedWebClientBuilder(HttpClient httpClient) {
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .baseUrl("http://localhost:8082/products") // ajusta host/puerto si hace falta
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+    }
+
+    @Bean(name = "productClient")
+    public WebClient productClient(WebClient.Builder builder) {
+        return builder
+                .baseUrl("http://businessdomain-product") // ajusta host/puerto si hace falta
                 .build();
     }
 
 
     @Bean(name = "transactionClient")
-    public WebClient transactionClient(HttpClient httpClient) {
-        return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .baseUrl("http://localhost:8083/transaction") // ajusta host/puerto si hace falta
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+    public WebClient transactionClient(WebClient.Builder builder) {
+        return builder
+                .baseUrl("http://businessdomain-transaction") // ajusta host/puerto si hace falta
                 .build();
     }
 }

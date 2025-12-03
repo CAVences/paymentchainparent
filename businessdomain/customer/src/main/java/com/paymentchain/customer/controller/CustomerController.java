@@ -23,6 +23,7 @@ public class CustomerController {
     private final WebClient transactionClient;
     private final Environment environment;
 
+
     public CustomerController(CustomerRepository customerRepository,
                               @Qualifier("productClient") WebClient productClient, @Qualifier("transactionClient") WebClient transactionClient, Environment environment) {
         this.customerRepository = customerRepository;
@@ -115,7 +116,7 @@ public class CustomerController {
     private String getProductName(long id) {
         ProductResponse product = productClient
                 .get()
-                .uri("/{id}", id)
+                .uri("/products/{id}", id)
                 .retrieve()
                 .bodyToMono(ProductResponse.class)
                 .timeout(Duration.ofSeconds(3))
@@ -131,7 +132,7 @@ public class CustomerController {
     private List<?> getTransactionStatus(String accountNumber) {
         List<?> transactions = transactionClient
                 .get()
-                .uri("/customer/{account}", accountNumber)
+                .uri("/transaction/customer/{account}", accountNumber)
                 .retrieve()
                 .bodyToMono(List.class)
                 .block();
