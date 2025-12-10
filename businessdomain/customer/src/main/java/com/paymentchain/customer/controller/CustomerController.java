@@ -1,16 +1,14 @@
 package com.paymentchain.customer.controller;
 
 import com.paymentchain.customer.entity.Customer;
-import com.paymentchain.customer.entity.CustomerProduct;
+import com.paymentchain.customer.exception.BusinessRuleException;
 import com.paymentchain.customer.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.paymentchain.customer.transactions.BusinessTransaction;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.Duration;
-import java.util.Collections;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,17 +17,14 @@ import java.util.Optional;
 public class CustomerController {
 
     private final CustomerRepository customerRepository;
-    private final WebClient productClient;   // WebClient ya configurado para productos
-    private final WebClient transactionClient;
     private final Environment environment;
+    private final BusinessTransaction businessTransaction;
 
 
-    public CustomerController(CustomerRepository customerRepository,
-                              @Qualifier("productClient") WebClient productClient, @Qualifier("transactionClient") WebClient transactionClient, Environment environment) {
+    public CustomerController(CustomerRepository customerRepository, Environment environment, BusinessTransaction businessTransaction) {
         this.customerRepository = customerRepository;
-        this.productClient = productClient; // viene del @Bean de WebClientConfig
-        this.transactionClient = transactionClient;
         this.environment = environment;
+        this.businessTransaction = businessTransaction;
     }
 
     @GetMapping("/check")
@@ -40,7 +35,12 @@ public class CustomerController {
     @GetMapping
     public ResponseEntity<?> findAll() {
         List<Customer> customers = customerRepository.findAll();
-        return ResponseEntity.ok().body(customers);
+
+        if(customers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(customers);
+        }
     }
 
     @GetMapping("/{id}")
@@ -54,13 +54,8 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody Customer customer) {
-        List<CustomerProduct> products =
-                customer.getProducts() != null ? customer.getProducts() : Collections.emptyList();
-        products.forEach(product -> product.setCustomer(customer));
-        customer.setProducts(products);
-
-        Customer customerSave = customerRepository.save(customer);
+    public ResponseEntity<?> save(@RequestBody Customer customer) throws BusinessRuleException, UnknownHostException {
+        Customer customerSave = businessTransaction.postCustomer(customer);
         return ResponseEntity.ok(customerSave);
     }
 
@@ -88,59 +83,14 @@ public class CustomerController {
     // Endpoint que regresa el customer con los nombres de producto resueltos vía WebClient
     @GetMapping("/full")
     public ResponseEntity<?> getByCode(@RequestParam String code) {
-        Customer customer = customerRepository.findByCode(code);
+        Customer customer = businessTransaction.getByCode(code);
 
-        if (customer == null) {
+        if(customer == null) {
             return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(customer);
         }
-
-        List<CustomerProduct> products =
-                customer.getProducts() != null ? customer.getProducts() : Collections.emptyList();
-
-        products.forEach(product ->
-                product.setProductName(getProductName(product.getProductId()))
-        );
-
-        List<?> transactions = getTransactionStatus(customer.getAccountNumber());
-
-        customer.setTransactions(transactions);
-
-        customer.setProducts(products);
-        return ResponseEntity.ok(customer);
     }
 
-    // DTO para deserializar la respuesta del microservicio de productos
-    public record ProductResponse(Long id, String name) {}
 
-    // 🔍 Llamada al microservicio de productos para obtener el nombre
-    private String getProductName(long id) {
-        ProductResponse product = productClient
-                .get()
-                .uri("/products/{id}", id)
-                .retrieve()
-                .bodyToMono(ProductResponse.class)
-                .timeout(Duration.ofSeconds(3))
-                .block();
-
-        if (product == null || product.name() == null) {
-            throw new IllegalStateException("No se pudo obtener el nombre del producto con id=" + id);
-        }
-
-        return product.name();
-    }
-
-    private List<?> getTransactionStatus(String accountNumber) {
-        List<?> transactions = transactionClient
-                .get()
-                .uri("/transaction/customer/{account}", accountNumber)
-                .retrieve()
-                .bodyToMono(List.class)
-                .block();
-
-        if(transactions == null) {
-            return Collections.emptyList();
-        }
-
-        return  transactions;
-    }
 }

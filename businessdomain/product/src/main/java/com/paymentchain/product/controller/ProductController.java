@@ -22,6 +22,9 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<?> getAllProducts(){
         List<Product> products = productRepository.findAll();
+        if(products.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok().body(products);
     }
 
